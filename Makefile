@@ -38,4 +38,4 @@ test:
 	#staticcheck ./...
 
 logs:
-	kubectl logs -l app=sales-api --all-containers=true -f --tail=100 | go run app/tooling/logfmt/main.go
+	kubectl logs -l app=sales-api -n myservice3 --all-containers=true -f --tail=100 | go run app/tooling/logfmt/main.go
