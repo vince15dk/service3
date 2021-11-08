@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: sales-api
+data:
+  db_host: "postgres:5432"
+  db_password: "postgres"
+  db_auth_privatekeyfile: "/service/private.pem"
+  zipkin_reporter_uri: "http://0.0.0.0:9411/api/v2/spans"
+  collect_from: "http://0.0.0.0:4000/debug/vars"
