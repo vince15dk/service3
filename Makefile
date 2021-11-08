@@ -36,3 +36,6 @@ tidy:
 test:
 	go test -v ./... -count=1
 	#staticcheck ./...
+
+logs:
+	kubectl logs -l app=sales-api --all-containers=true -f --tail=100 | go run app/tooling/logfmt/main.go
