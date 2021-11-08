@@ -1,8 +1,5 @@
 SHELL := /bin/bash
 
-run:
-	go run main.go
-
 # ==============================================================================
 # Building containers
 
@@ -27,7 +24,7 @@ k8s-deploy:
 	./zarf/k8s/deploy/deploy.sh $(version)
 
 run:
-	go run app/sales-api/main.go
+	go run app/services/sales-api/main.go | go run app/tooling/logfmt/main.go
 
 runa:
 	go run app/admin/main.go
