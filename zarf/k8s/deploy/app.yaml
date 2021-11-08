@@ -12,103 +12,25 @@ spec:
         app: sales-api
     spec:
       containers:
-        - name: zipkin
-          image: openzipkin/zipkin:2.11
-          ports:
-            - name: zipkin
-              containerPort: 9411
         - name: app
           image: b65b0111-kr1-registry.container.cloud.toast.com/sales-api-amd64:$version
-          imagePullPolicy: Always
-          env:
-            - name: SALES_DB_HOST
-              valueFrom:
-                configMapKeyRef:
-                  name: sales-api
-                  key: db_host
-            - name: SALES_Auth_PrivateKeyFile
-              valueFrom:
-                configMapKeyRef:
-                  name: sales-api
-                  key: db_auth_privatekeyfile
-            - name: SALES_DB_PASSWORD
-              valueFrom:
-                configMapKeyRef:
-                  name: sales-api
-                  key: db_password
-            - name: SALES_ZIPKIN_REPORTER_URI
-              valueFrom:
-                configMapKeyRef:
-                  name: sales-api
-                  key: zipkin_reporter_uri
-            - name: KUBERNETES_NAMESPACE
-              valueFrom:
-                fieldRef:
-                  fieldPath: metadata.namespace
-            - name: KUBERNETES_PODNAME
-              valueFrom:
-                fieldRef:
-                  fieldPath: metadata.name
-            - name: KUBERNETES_NAMESPACE_POD_IP
-              valueFrom:
-                fieldRef:
-                  fieldPath: status.podIP
-            - name: KUBERNETES_NODENAME
-              valueFrom:
-                fieldRef:
-                  fieldPath: spec.nodeName
-          ports:
-            - name: app
-              containerPort: 3000
-            - name: app-debug
-              containerPort: 4000
-          readinessProbe:
-            httpGet:
-              path: /readiness
-              port: 3000
-            initialDelaySeconds: 30
-            periodSeconds: 15
-          livenessProbe:
-            httpGet:
-              path: /liveness
-              port: 3000
-            initialDelaySeconds: 30
-            periodSeconds: 15
-            #        - name: metrics
-            #          image: metrics-amd64:1.0
-            #          env:
-            #            - name: METRICS_COLLECT_FROM
-            #              valueFrom:
-            #                configMapKeyRef:
-            #                  name: sales-api
-            #                  key: collect_from
-            #          ports:
-            #            - name: metrics
-            #              containerPort: 3001
-            #            - name: metrics-debug
-            #              containerPort: 4001
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: sales-api
-spec:
-  selector:
-    app: sales-api
-  type: NodePort
-  ports:
-    - name: zipkin
-      port: 9411
-      targetPort: zipkin
-    - name: app
-      port: 3000
-      targetPort: app
-    - name: app-debug
-      port: 4000
-      targetPort: app-debug
-#    - name: metrics
-#      port: 3001
-#      targetPort: metrics
-#    - name: metrics-debug
-#      port: 4001
-#      targetPort: metrics-debug
+
+#---
+#apiVersion: v1
+#kind: Service
+#metadata:
+#  name: sales-api
+#spec:
+#  selector:
+#    app: sales-api
+#  type: NodePort
+#  ports:
+#    - name: zipkin
+#      port: 9411
+#      targetPort: zipkin
+#    - name: app
+#      port: 3000
+#      targetPort: app
+#    - name: app-debug
+#      port: 4000
+#      targetPort: app-debug
