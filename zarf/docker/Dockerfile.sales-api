@@ -16,7 +16,7 @@ ARG BUILD_DATE
 ARG BUILD_REF
 COPY --from=build_sales-api /service/app/services/sales-api/sales-api /service/sales-api
 WORKDIR /service
-echo -n "Asia/Seoul" > /etc/timezone
+RUN echo -n "Asia/Seoul" > /etc/timezone
 CMD ["./sales-api"]
 
 LABEL org.opencontainers.image.created="${BUILD_DATE}" \
