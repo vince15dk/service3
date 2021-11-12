@@ -14,11 +14,11 @@ spec:
       containers:
         - name: app
           image: b65b0111-kr1-registry.container.cloud.toast.com/sales-api-amd64:$version
-      ports:
-      - name: sales-api
-        containerPort: 3000
-      - name: sales-api-debug
-        containerPort: 4000
+          ports:
+          - name: sales-api
+            containerPort: 3000
+          - name: sales-api-debug
+            containerPort: 4000
 
 ---
 apiVersion: v1
