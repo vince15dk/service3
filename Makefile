@@ -1,5 +1,7 @@
 SHELL := /bin/bash
 
+# expvarmon -ports=":4000" -vars="build,requests,goroutines,errors,panics,mem:memstats.Alloc"
+
 # ==============================================================================
 # Building containers
 
