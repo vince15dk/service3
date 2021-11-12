@@ -31,3 +31,21 @@ spec:
     - name: app-debug
       port: 4000
       targetPort: app-debug
+
+#kl apply -n myservice3 -f - <<EOF
+#apiVersion: v1
+#kind: Service
+#metadata:
+#  name: sales-api
+#spec:
+#  selector:
+#    app: sales-api
+#  type: NodePort
+#  ports:
+#    - name: app
+#      port: 3000
+#      targetPort: app
+#    - name: app-debug
+#      port: 4000
+#      targetPort: app-debug
+#  EOF
