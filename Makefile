@@ -7,6 +7,8 @@ VERSION := 1.0
 
 all: sales-api
 
+deploy: sales-api docker-push k8s-deploy
+
 sales-api:
 	docker build \
 		-f zarf/docker/Dockerfile.sales-api \
