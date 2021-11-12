@@ -15,22 +15,19 @@ spec:
         - name: app
           image: b65b0111-kr1-registry.container.cloud.toast.com/sales-api-amd64:$version
 
-#---
-#apiVersion: v1
-#kind: Service
-#metadata:
-#  name: sales-api
-#spec:
-#  selector:
-#    app: sales-api
-#  type: NodePort
-#  ports:
-#    - name: zipkin
-#      port: 9411
-#      targetPort: zipkin
-#    - name: app
-#      port: 3000
-#      targetPort: app
-#    - name: app-debug
-#      port: 4000
-#      targetPort: app-debug
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: sales-api
+spec:
+  selector:
+    app: sales-api
+  type: NodePort
+  ports:
+    - name: app
+      port: 3000
+      targetPort: app
+    - name: app-debug
+      port: 4000
+      targetPort: app-debug
