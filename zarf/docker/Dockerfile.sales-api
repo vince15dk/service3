@@ -14,9 +14,12 @@ RUN go build -ldflags "-X main.build=${BUILD_REF}"
 FROM alpine:3.14
 ARG BUILD_DATE
 ARG BUILD_REF
+
+RUN apk --no-cache add tzdata
+RUN /usr/share/zoneinfo/Asia/Seoul /etc/localtime
+
 COPY --from=build_sales-api /service/app/services/sales-api/sales-api /service/sales-api
 WORKDIR /service
-RUN echo "Asia/Seoul" > /etc/timezone
 CMD ["./sales-api"]
 
 LABEL org.opencontainers.image.created="${BUILD_DATE}" \
