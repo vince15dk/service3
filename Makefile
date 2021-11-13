@@ -45,7 +45,8 @@ logs:
 	kubectl logs -l app=sales-api -n myservice3 --all-containers=true -f --tail=100 | go run app/tooling/logfmt/main.go
 
 push:
-	git commit -am "update"
+	git add -A
+	git commit -m "update"
 	git push origin master
 
 pull:
