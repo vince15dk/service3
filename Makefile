@@ -31,7 +31,7 @@ run:
 	go run app/services/sales-api/main.go | go run app/tooling/logfmt/main.go
 
 runa:
-	go run app/admin/main.go
+	go run app/services/admin/main.go
 
 tidy:
 	go mod tidy
@@ -43,3 +43,10 @@ test:
 
 logs:
 	kubectl logs -l app=sales-api -n myservice3 --all-containers=true -f --tail=100 | go run app/tooling/logfmt/main.go
+
+push:
+	git commit -am "update"
+	git push origin master
+
+pull:
+	git pull origin master
