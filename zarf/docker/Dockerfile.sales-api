@@ -14,9 +14,11 @@ RUN go build -ldflags "-X main.build=${BUILD_REF}"
 FROM alpine:3.14
 ARG BUILD_DATE
 ARG BUILD_REF
-
-RUN apk --no-cache add tzdata
-RUN echo "Asia/Seoul" > /etc/timezone
+USER 0
+RUN apk --no-cache add tzdata && \
+    cp /usr/share/zoneinfo/Asia/Seoul /etc/localtime && \
+	echo "Asia/Seoul" > /etc/timezone \
+	apk del tzdata
 
 COPY --from=build_sales-api /service/app/services/sales-api/sales-api /service/sales-api
 WORKDIR /service
