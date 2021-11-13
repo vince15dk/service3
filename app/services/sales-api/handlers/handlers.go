@@ -2,10 +2,10 @@
 package handlers
 
 import (
-	"encoding/json"
 	"expvar"
 	"github.com/dimfeld/httptreemux/v5"
 	"github.com/vince15dk/myservice3/app/services/sales-api/handlers/debug/checkgrp"
+	"github.com/vince15dk/myservice3/app/services/sales-api/handlers/v1/testgrp"
 	"go.uber.org/zap"
 	"net/http"
 	"net/http/pprof"
@@ -57,14 +57,11 @@ type APIMuxConfig struct {
 // APIMux constructs an http.Handler with all application routes defined.
 func APIMux(cfg APIMuxConfig) *httptreemux.ContextMux {
 	mux := httptreemux.NewContextMux()
-	h := func(w http.ResponseWriter, r *http.Request){
-		status := struct {
-			Status string
-		}{
-			Status: "OK",
-		}
-		json.NewEncoder(w).Encode(status)
+
+	tgh := testgrp.Handlers{
+		Log: cfg.Log,
 	}
-	mux.Handle(http.MethodGet, "/test", h)
+	mux.Handle(http.MethodGet, "/v1/test", tgh.Test)
+
 	return mux
 }
