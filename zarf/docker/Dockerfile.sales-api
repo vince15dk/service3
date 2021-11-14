@@ -17,7 +17,7 @@ ARG BUILD_REF
 USER 0
 RUN apk --no-cache add tzdata && \
     cp /usr/share/zoneinfo/Asia/Seoul /etc/localtime && \
-	echo "Asia/Seoul" > /etc/timezone
+    echo "Asia/Seoul" > /etc/timezone
 
 COPY --from=build_sales-api /service/app/services/sales-api/sales-api /service/sales-api
 WORKDIR /service
