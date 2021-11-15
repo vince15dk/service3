@@ -3,9 +3,9 @@ package handlers
 
 import (
 	"expvar"
-	"github.com/dimfeld/httptreemux/v5"
 	"github.com/vince15dk/myservice3/app/services/sales-api/handlers/debug/checkgrp"
 	"github.com/vince15dk/myservice3/app/services/sales-api/handlers/v1/testgrp"
+	"github.com/vince15dk/myservice3/foundation/web"
 	"go.uber.org/zap"
 	"net/http"
 	"net/http/pprof"
@@ -55,13 +55,23 @@ type APIMuxConfig struct {
 }
 
 // APIMux constructs an http.Handler with all application routes defined.
-func APIMux(cfg APIMuxConfig) *httptreemux.ContextMux {
-	mux := httptreemux.NewContextMux()
+func APIMux(cfg APIMuxConfig) *web.App {
+
+	// Construct the web.App which holds all routes.
+	app := web.NewApp(cfg.Shutdown)
+
+	// Load the routes for the different versions of the API.
+	v1(app, cfg)
+
+	return app
+}
+
+// v1 binds all the version 1 routes.
+func v1(app *web.App, cfg APIMuxConfig){
+	const version = "v1"
 
 	tgh := testgrp.Handlers{
 		Log: cfg.Log,
 	}
-	mux.Handle(http.MethodGet, "/v1/test", tgh.Test)
-
-	return mux
+	app.Handle(http.MethodGet, version, "/test", tgh.Test)
 }
