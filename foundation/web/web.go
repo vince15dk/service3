@@ -42,6 +42,13 @@ func (a *App) SignalShutdown() {
 // Handle sets a handler function for a given HTTP method and path pair
 // to the application server mux.
 func (a *App) Handle(method string, group string, path string, handler Handler, mw ...Middleware) {
+
+	// First wrap handler specific middleware around this handler.
+	handler = wrapMiddleware(mw, handler)
+
+	// Add the application's general middleware to the handler chain.
+	handler = wrapMiddleware(a.mw, handler)
+
 	h := func(w http.ResponseWriter, r *http.Request) {
 
 		// Pull the context from the request and
