@@ -74,5 +74,5 @@ func v1(app *web.App, cfg APIMuxConfig){
 	tgh := testgrp.Handlers{
 		Log: cfg.Log,
 	}
-	app.Handle(http.MethodGet, version, "/test2", tgh.Test)
+	app.Handle(http.MethodGet, version, "/test", tgh.Test)
 }
