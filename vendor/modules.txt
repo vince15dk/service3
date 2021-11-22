@@ -4,6 +4,9 @@ github.com/ardanlabs/conf/v2
 # github.com/dimfeld/httptreemux/v5 v5.4.0
 ## explicit
 github.com/dimfeld/httptreemux/v5
+# github.com/golang-jwt/jwt/v4 v4.1.0
+## explicit
+github.com/golang-jwt/jwt/v4
 # github.com/google/uuid v1.3.0
 ## explicit
 github.com/google/uuid

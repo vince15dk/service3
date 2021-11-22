@@ -35,8 +35,8 @@ k8s-deploy:
 run:
 	go run app/services/sales-api/main.go | go run app/tooling/logfmt/main.go
 
-runa:
-	go run app/services/admin/main.go
+admin:
+	go run app/tooling/admin/main.go
 
 tidy:
 	go mod tidy
