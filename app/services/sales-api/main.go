@@ -107,7 +107,7 @@ func run(log *zap.SugaredLogger) error {
 	debugMux := handlers.DebugMux(build, log)
 
 	// Start the service listening for debug requests.
-	// Not concerted with shutting this down with load shedding.
+	// Not concerned with shutting this down with load shedding.
 	go func() {
 		if err := http.ListenAndServe(cfg.Web.DebugHost, debugMux); err != nil{
 			log.Errorw("shutdown", "status", "debug router closed", "host", cfg.Web.DebugHost, "ERROR", err)

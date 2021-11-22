@@ -33,8 +33,8 @@ func DebugStandardLibraryMux() *http.ServeMux {
 
 // DebugMux registers all the debug standard library routes and the custom
 // debug application routes for the service. This bypassing the use of the
-// DefaultServerMux. Using the DefaultServerMux would be a security rist since
-// a dependency could inject a handler into our serivce without us knowing it.
+// DefaultServerMux. Using the DefaultServerMux would be a security risk since
+// a dependency could inject a handler into our service without us knowing it.
 func DebugMux(build string, log *zap.SugaredLogger)http.Handler{
 	mux := DebugStandardLibraryMux()
 
