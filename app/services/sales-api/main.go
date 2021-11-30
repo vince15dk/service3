@@ -153,7 +153,7 @@ func run(log *zap.SugaredLogger) error {
 	// ==============================================================
 	// Shutdown
 
-	// BLocking main and waiting for shutdown.
+	// Blocking main and waiting for shutdown.
 	select {
 	case err := <-serverErrors:
 		return fmt.Errorf("server erorr: %w", err)
