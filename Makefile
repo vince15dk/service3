@@ -46,10 +46,6 @@ tidy:
 	go mod tidy
 	go mod vendor
 
-test:
-	go test -v ./... -count=1
-	#staticcheck ./...
-
 logs:
 	kubectl logs -l app=sales-api -n myservice3 --all-containers=true -f --tail=100 | go run app/tooling/logfmt/main.go
 
