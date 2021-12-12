@@ -1,6 +1,9 @@
 # github.com/ardanlabs/conf/v2 v2.1.1
 ## explicit
 github.com/ardanlabs/conf/v2
+# github.com/ardanlabs/darwin v1.3.0
+## explicit
+github.com/ardanlabs/darwin
 # github.com/dimfeld/httptreemux/v5 v5.4.0
 ## explicit
 github.com/dimfeld/httptreemux/v5

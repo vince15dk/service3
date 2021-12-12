@@ -11,6 +11,11 @@ spec:
       labels:
         app: sales-api
     spec:
+      initContainers:
+      # sales-api init container configuration
+        - name: init-migrate
+          image: 89e26523-kr1-registry.container.cloud.toast.com/service/sales-api-amd64:$version
+          command: ['./admin']
       containers:
         - name: app
           image: 89e26523-kr1-registry.container.cloud.toast.com/service/sales-api-amd64:$version

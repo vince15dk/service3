@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"crypto/rand"
 	"crypto/rsa"
 	"crypto/x509"
@@ -8,25 +9,82 @@ import (
 	"errors"
 	"fmt"
 	"github.com/golang-jwt/jwt/v4"
+	"github.com/vince15dk/myservice3/business/data/schema"
+	"github.com/vince15dk/myservice3/business/sys/database"
 	"io"
 	"os"
 	"time"
 )
 
 func main() {
-	err := genToken()
-
+	//err := genToken()
+	err := migrate()
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
 	}
 }
 
+func seed() error {
+	cfg := database.Config{
+		User:         "postgres",
+		Password:     "postgres",
+		Host:         "133.186.132.230:5432",
+		Name:         "postgres",
+		MaxIdleConns: 0,
+		MaxOpenConns: 0,
+		DisableTLS:   true,
+	}
+	db, err := database.Open(cfg)
+	if err != nil {
+		return fmt.Errorf("connect database: %w", err)
+	}
+	defer db.Close()
+
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	if err := schema.Seed(ctx, db); err != nil {
+		return fmt.Errorf("seed database: %w", err)
+	}
+
+	fmt.Println("seed data complete")
+	return nil
+}
+
+func migrate() error {
+	cfg := database.Config{
+		User:         "postgres",
+		Password:     "postgres",
+		Host:         "133.186.132.230:5432",
+		Name:         "postgres",
+		MaxIdleConns: 0,
+		MaxOpenConns: 0,
+		DisableTLS:   true,
+	}
+	db, err := database.Open(cfg)
+	if err != nil {
+		return fmt.Errorf("connect database: %w", err)
+	}
+	defer db.Close()
+
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	if err := schema.Migrate(ctx, db); err != nil {
+		return fmt.Errorf("migrate database: %w", err)
+	}
+
+	fmt.Println("migrations complete")
+
+	return seed()
+}
+
 func genToken() error {
 
 	name := "zarf/keys/54bb2165-71e1-41a6-af3e-7da4a0e1e2c1.pem"
 	file, err := os.Open(name)
-	if err != nil{
+	if err != nil {
 		return err
 	}
 	defer file.Close()
@@ -58,7 +116,7 @@ func genToken() error {
 	// iat (issued at time): Time at which the JWT was issued; can be used to determine age of the JWT
 	// jti (JWT ID): Unique identifier; can be used to prevent the JWT from being replayed (allows a token to be used only once)
 	// kid: keyID
-	claims := struct{
+	claims := struct {
 		jwt.StandardClaims
 		Roles []string
 	}{
@@ -109,7 +167,7 @@ func genToken() error {
 		ValidMethods: []string{"RS256"},
 	}
 
-	var parsedClaim struct{
+	var parsedClaim struct {
 		jwt.StandardClaims
 		Roles []string
 	}
