@@ -23,7 +23,7 @@ deploy: sales-api docker-push k8s-deploy
 sales-api:
 	docker build \
 		-f zarf/docker/Dockerfile.sales-api \
-		-t b65b0111-kr1-registry.container.cloud.toast.com/sales-api-amd64:$(version) \
+		-t 89e26523-kr1-registry.container.cloud.toast.com/service/sales-api-amd64:$(version) \
 		--build-arg PACKAGE_NAME=sales-api \
 		--build-arg VCS_REF=`git rev-parse --short HEAD` \
 		--build-arg BUILD_DATE=`date -u +"%Y-%m-%dT%H:%M:%SZ"` \
@@ -31,7 +31,7 @@ sales-api:
 # ==============================================================================
 
 docker-push:
-	docker push b65b0111-kr1-registry.container.cloud.toast.com/sales-api-amd64:$(version)
+	docker push 89e26523-kr1-registry.container.cloud.toast.com/service/sales-api-amd64:$(version)
 
 k8s-deploy:
 	./zarf/k8s/deploy/deploy.sh $(version)
