@@ -39,7 +39,7 @@ spec:
             failureThreshold: 2
           env:
             - name: SALES_DB_HOST
-                valueFrom:
+              valueFrom:
                   configMapKeyRef:
                     name: app-config
                     key: db_host
