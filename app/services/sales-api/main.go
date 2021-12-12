@@ -7,6 +7,8 @@ import (
 	"fmt"
 	"github.com/ardanlabs/conf/v2"
 	"github.com/vince15dk/myservice3/app/services/sales-api/handlers"
+	"github.com/vince15dk/myservice3/business/sys/auth"
+	"github.com/vince15dk/myservice3/foundation/keystore"
 	"go.uber.org/automaxprocs/maxprocs"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
@@ -66,6 +68,10 @@ func run(log *zap.SugaredLogger) error {
 			APIHost         string        `conf:"default:0.0.0.0:3000"`
 			DebugHost       string        `conf:"default:0.0.0.0:4000"`
 		}
+		Auth struct {
+			KeysFolder string `conf:"default:zarf/keys/"`
+			ActiveKID  string `conf:"default:54bb2165-71e1-41a6-af3e-7da4a0e1e2c1"`
+		}
 	}{
 		Version: conf.Version{
 			Build: build,
@@ -88,12 +94,29 @@ func run(log *zap.SugaredLogger) error {
 	defer log.Infow("showdown complete")
 
 	out, err := conf.String(&cfg)
-	if err != nil{
+	if err != nil {
 		return fmt.Errorf("generating config for output: %w", err)
 	}
 	log.Infow("startup", "config", out)
 
 	expvar.NewString("build").Set(build)
+
+	// =========================================================================
+	// Initialize authentication support
+
+	log.Infow("startup", "status", "initializing authentication support")
+
+	// Construct a key store based on the key files stored in
+	// the specified directory.
+	ks, err := keystore.NewFS(os.DirFS(cfg.Auth.KeysFolder))
+	if err != nil {
+		return fmt.Errorf("reading keys: %w", err)
+	}
+
+	auth, err := auth.New(cfg.Auth.ActiveKID, ks)
+	if err != nil {
+		return fmt.Errorf("constructing auth: %w", err)
+	}
 
 	// ==============================================================
 	// Start Debug Service
@@ -109,7 +132,7 @@ func run(log *zap.SugaredLogger) error {
 	// Start the service listening for debug requests.
 	// Not concerned with shutting this down with load shedding.
 	go func() {
-		if err := http.ListenAndServe(cfg.Web.DebugHost, debugMux); err != nil{
+		if err := http.ListenAndServe(cfg.Web.DebugHost, debugMux); err != nil {
 			log.Errorw("shutdown", "status", "debug router closed", "host", cfg.Web.DebugHost, "ERROR", err)
 		}
 	}()
@@ -127,17 +150,18 @@ func run(log *zap.SugaredLogger) error {
 	// Construct the mux for the API calls.
 	apiMux := handlers.APIMux(handlers.APIMuxConfig{
 		Shutdown: shutdown,
-		Log: log,
+		Log:      log,
+		Auth:     auth,
 	})
 
 	// Construct a server to service the requests against the mux.
 	api := http.Server{
-		Addr: cfg.Web.APIHost,
-		Handler: apiMux,
-		ReadTimeout: cfg.Web.ReadTimeout,
+		Addr:         cfg.Web.APIHost,
+		Handler:      apiMux,
+		ReadTimeout:  cfg.Web.ReadTimeout,
 		WriteTimeout: cfg.Web.WriteTimeout,
-		IdleTimeout: cfg.Web.IdleTimeout,
-		ErrorLog: zap.NewStdLog(log.Desugar()),
+		IdleTimeout:  cfg.Web.IdleTimeout,
+		ErrorLog:     zap.NewStdLog(log.Desugar()),
 	}
 
 	// Make a channel to listen for errors coming from the listener. Use a
@@ -166,7 +190,7 @@ func run(log *zap.SugaredLogger) error {
 		defer cancel()
 
 		// Asking listener to shutdown and shed load.
-		if err := api.Shutdown(ctx); err != nil{
+		if err := api.Shutdown(ctx); err != nil {
 			api.Close()
 			return fmt.Errorf("could not stop server gracefully: %w", err)
 		}

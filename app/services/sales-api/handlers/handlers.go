@@ -5,6 +5,7 @@ import (
 	"expvar"
 	"github.com/vince15dk/myservice3/app/services/sales-api/handlers/debug/checkgrp"
 	"github.com/vince15dk/myservice3/app/services/sales-api/handlers/v1/testgrp"
+	"github.com/vince15dk/myservice3/business/sys/auth"
 	"github.com/vince15dk/myservice3/business/web/mid"
 	"github.com/vince15dk/myservice3/foundation/web"
 	"go.uber.org/zap"
@@ -35,13 +36,13 @@ func DebugStandardLibraryMux() *http.ServeMux {
 // debug application routes for the service. This bypassing the use of the
 // DefaultServerMux. Using the DefaultServerMux would be a security risk since
 // a dependency could inject a handler into our service without us knowing it.
-func DebugMux(build string, log *zap.SugaredLogger)http.Handler{
+func DebugMux(build string, log *zap.SugaredLogger) http.Handler {
 	mux := DebugStandardLibraryMux()
 
 	// Register debug check endpoints.
 	cgh := checkgrp.Handlers{
 		Build: build,
-		Log: log,
+		Log:   log,
 	}
 	mux.HandleFunc("/debug/readiness", cgh.Readiness)
 	mux.HandleFunc("/debug/liveness", cgh.Liveness)
@@ -53,6 +54,7 @@ func DebugMux(build string, log *zap.SugaredLogger)http.Handler{
 type APIMuxConfig struct {
 	Shutdown chan os.Signal
 	Log      *zap.SugaredLogger
+	Auth     *auth.Auth
 }
 
 // APIMux constructs an http.Handler with all application routes defined.
@@ -65,7 +67,7 @@ func APIMux(cfg APIMuxConfig) *web.App {
 		mid.Errors(cfg.Log),
 		mid.Metrics(),
 		mid.Panics(),
-		)
+	)
 
 	// Load the routes for the different versions of the API.
 	v1(app, cfg)
@@ -74,11 +76,12 @@ func APIMux(cfg APIMuxConfig) *web.App {
 }
 
 // v1 binds all the version 1 routes.
-func v1(app *web.App, cfg APIMuxConfig){
+func v1(app *web.App, cfg APIMuxConfig) {
 	const version = "v1"
 
 	tgh := testgrp.Handlers{
 		Log: cfg.Log,
 	}
 	app.Handle(http.MethodGet, version, "/test", tgh.Test)
+	app.Handle(http.MethodGet, version, "/testauth", tgh.Test, mid.Authenticate(cfg.Auth), mid.Authorize("ADMIN"))
 }
