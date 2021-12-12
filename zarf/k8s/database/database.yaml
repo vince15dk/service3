@@ -19,16 +19,14 @@ spec:
       labels:
         app: database
     spec:
-      dnsPolicy: ClusterFirstWithHostNet
-      hostNetwork: true
       containers:
       - name: postgres
         image: postgres:13-alpine
         resources:
           limits:
-            cpu: "1000m" # Up to 1 full core
+            cpu: "1" # Up to 1 full core
           requests:
-            cpu: "1000m" # Use 1 full core
+            cpu: "500m" # Use 1 full core
         imagePullPolicy: Always
         env:
         - name: POSTGRES_PASSWORD
@@ -66,7 +64,7 @@ metadata:
   name: database-service
   namespace: database-system
 spec:
-  type: ClusterIP
+  type: NodePort
   selector:
     app: database
   ports:
