@@ -38,6 +38,11 @@ spec:
             successThreshold: 1
             failureThreshold: 2
           env:
+            - name: SALES_DB_HOST
+                valueFrom:
+                  configMapKeyRef:
+                    name: app-config
+                    key: db_host
             - name: KUBERNETES_NAMESPACE
               valueFrom:
                 fieldRef:
