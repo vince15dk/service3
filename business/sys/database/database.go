@@ -42,7 +42,7 @@ func Open(cfg Config) (*sqlx.DB, error) {
 	}
 	q := make(url.Values)
 	q.Set("sslmode", sslMode)
-	q.Set("timezone", "KST")
+	q.Set("timezone", "utc+9")
 
 	u := url.URL{
 		Scheme:   "postgres",
