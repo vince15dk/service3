@@ -18,8 +18,8 @@ type Container struct {
 }
 
 // StartContainer starts the specified container for running tests.
-func StartContainer(t *testing.T, image string, hPort string, cport string, args ...string) *Container {
-	portMapping := fmt.Sprintf("%s:%s", hPort, cport)
+func StartContainer(t *testing.T, image string, hPort string, cPort string, args ...string) *Container {
+	portMapping := fmt.Sprintf("%s:%s", hPort, cPort)
 	arg := []string{"run", "-p", portMapping, "-d"}
 	arg = append(arg, args...)
 	arg = append(arg, image)
@@ -45,7 +45,7 @@ func StartContainer(t *testing.T, image string, hPort string, cport string, args
 		t.Fatalf("could not decode json: %v", err)
 	}
 
-	ip, randPort := extractIPPort(t, doc, cport)
+	ip, randPort := extractIPPort(t, doc, hPort)
 
 	c := Container{
 		ID:   id,
