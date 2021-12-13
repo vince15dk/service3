@@ -116,7 +116,7 @@ func TestUser(t *testing.T) {
 			t.Logf("\t%s\tTest %d:\tShould be able to delete user.", tests.Success, testID)
 
 			_, err = store.QueryByID(ctx, claims, usr.ID)
-			if errors.Is(err, database.ErrNotFound) {
+			if !errors.Is(err, database.ErrNotFound) {
 				t.Fatalf("\t%s\tTest %d:\tShould NOT be able to retrieve user : %s.", tests.Failed, testID, err)
 			}
 			t.Logf("\t%s\tTest %d:\tShould NOT be able to retrieve user.", tests.Success, testID)
