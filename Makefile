@@ -57,6 +57,10 @@ tidy:
 logs:
 	kubectl logs -l app=sales-api -n myservice3 --all-containers=true -f --tail=100 | go run app/tooling/logfmt/main.go
 
+logs-sales:
+	kubectl logs -l app=sales-api -n myservice3 --all-containers=true -f --tail=100 | go run app/tooling/logfmt/main.go -service=SALES-API
+
+
 push:
 	git add -A
 	git commit -m "update"
