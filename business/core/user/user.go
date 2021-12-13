@@ -85,6 +85,23 @@ func (c Core) Query(ctx context.Context, pageNumber int, rowsPerPage int) ([]use
 	return users, nil
 }
 
+// QueryByID gets the specified user from the database.
+func (c Core) QueryByID(ctx context.Context, claims auth.Claims, userID string) (user.User, error) {
+
+	// PERFORM PRE BUSINESS OPERATIONS
+
+	usr, err := c.user.QueryByID(ctx, claims, userID)
+	if err != nil {
+		return user.User{}, fmt.Errorf("query: %w", err)
+	}
+
+	// PERFORM POST BUSINESS OPERATIONS
+
+	return usr, nil
+}
+
+
+
 // QueryByEmail gets the specified user from the database by email.
 func (c Core) QueryByEmail(ctx context.Context, claims auth.Claims, email string) (user.User, error) {
 
@@ -116,5 +133,3 @@ func (c Core) Authenticate(ctx context.Context, now time.Time, email, password s
 
 	return claims, nil
 }
-
-

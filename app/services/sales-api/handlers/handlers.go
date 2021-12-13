@@ -5,7 +5,9 @@ import (
 	"expvar"
 	"github.com/jmoiron/sqlx"
 	"github.com/vince15dk/myservice3/app/services/sales-api/handlers/debug/checkgrp"
-	"github.com/vince15dk/myservice3/app/services/sales-api/handlers/v1/testgrp"
+	userCore "github.com/vince15dk/myservice3/business/core/user"
+	v1UserGrp "github.com/vince15dk/myservice3/app/services/sales-api/handlers/v1/usergrp"
+	v1TestGrp "github.com/vince15dk/myservice3/app/services/sales-api/handlers/v1/testgrp"
 	"github.com/vince15dk/myservice3/business/sys/auth"
 	"github.com/vince15dk/myservice3/business/web/mid"
 	"github.com/vince15dk/myservice3/foundation/web"
@@ -82,9 +84,22 @@ func APIMux(cfg APIMuxConfig) *web.App {
 func v1(app *web.App, cfg APIMuxConfig) {
 	const version = "v1"
 
-	tgh := testgrp.Handlers{
+	tgh := v1TestGrp.Handlers{
 		Log: cfg.Log,
 	}
 	app.Handle(http.MethodGet, version, "/test", tgh.Test)
 	app.Handle(http.MethodGet, version, "/testauth", tgh.Test, mid.Authenticate(cfg.Auth), mid.Authorize("ADMIN"))
+
+	// Register user management and authentication endpoints.
+	ugh := v1UserGrp.Handlers{
+		User: userCore.NewCore(cfg.Log, cfg.DB),
+		Auth: cfg.Auth,
+	}
+	app.Handle(http.MethodGet, version, "/users/token", ugh.Token)
+	app.Handle(http.MethodGet, version, "/users/:page/:rows", ugh.Query, mid.Authenticate(cfg.Auth), mid.Authorize(auth.RoleAdmin))
+	app.Handle(http.MethodGet, version, "/users/:id", ugh.QueryByID, mid.Authenticate(cfg.Auth))
+	app.Handle(http.MethodPost, version, "/users", ugh.Create, mid.Authenticate(cfg.Auth), mid.Authorize(auth.RoleAdmin))
+	app.Handle(http.MethodPut, version, "/users/:id", ugh.Update, mid.Authenticate(cfg.Auth), mid.Authorize(auth.RoleAdmin))
+	app.Handle(http.MethodDelete, version, "/users/:id", ugh.Delete, mid.Authenticate(cfg.Auth), mid.Authorize(auth.RoleAdmin))
+
 }
