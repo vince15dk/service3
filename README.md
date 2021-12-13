@@ -10,3 +10,6 @@ password admin1234
 
 # dblabs
 https://github.com/danvergara/dblab
+
+# Integration Test
+go test ./app/services/sales-api/tests/ -run TestUsers/getToken200 -v
