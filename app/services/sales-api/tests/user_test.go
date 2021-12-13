@@ -25,7 +25,7 @@ func TestUsers(t *testing.T) {
 		t,
 		tests.DBContainer{
 			Image: "postgres:13-alpine",
-			HPort: "8082",
+			HPort: "8083",
 			CPort: "5432",
 			Args:  []string{"-e", "POSTGRES_PASSWORD=postgres"},
 		},

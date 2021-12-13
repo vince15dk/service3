@@ -27,7 +27,7 @@ func StartContainer(t *testing.T, image string, hPort string, cPort string, args
 	cmd := exec.Command("docker", arg...)
 	var out bytes.Buffer
 	cmd.Stdout = &out
-	fmt.Println(arg)
+
 	if err := cmd.Run(); err != nil {
 		t.Fatalf("could not start container %s: %v", image, err)
 	}
