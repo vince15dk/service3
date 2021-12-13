@@ -17,6 +17,11 @@ spec:
           image: 89e26523-kr1-registry.container.cloud.toast.com/service/sales-api-amd64:$version
           command: ['./admin']
       containers:
+        - name: zipkin
+          image: openzipkin/zipkin:2.23
+          ports:
+          - name: zipkin
+            containerPort: 9411
         - name: app
           image: 89e26523-kr1-registry.container.cloud.toast.com/service/sales-api-amd64:$version
           ports:
@@ -75,6 +80,9 @@ spec:
     app: sales-api
   type: NodePort
   ports:
+    - name: zipkin
+      port: 9411
+      targetPort: zipkin
     - name: sales-api
       port: 3000
       targetPort: sales-api
