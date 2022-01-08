@@ -1,15 +1,37 @@
-#kl apply -n myservice3 -f - <<EOF
-#apiVersion: v1
-#kind: Service
-#...
-#EOF
+# `SMS-Webhook-api`
 
-# PGAdmin
-username: admin@pg.com
-password admin1234
+### Execute it in local env
+```bash
+make run
+```
+<br/>
 
-# dblabs
-https://github.com/danvergara/dblab
+### Debugging Handler
+```
+GET {host}:4000/test    // Liveness probe check
 
-# Integration Test
-go test ./app/services/sales-api/tests/ -run TestUsers/getToken200 -v
+GET {host}:4000/testauth  // Authentication Test
+```
+
+<br/>
+
+### Api Service Handler
+* GET
+```
+GET {host}:3000/users/token    
+GET {host}:3000/users/:page/:rows  
+GET {host}:3000/users/:page/:id 
+```
+* POST
+```
+POST {host}:3000/users   
+```
+* PUT
+```
+PUT {host}:3000/users/:id
+```
+* Delete
+```
+DELETE {host}:3000/users/:id
+```
+<br/>
